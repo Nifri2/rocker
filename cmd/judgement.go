@@ -198,6 +198,11 @@ func (i *Insults) GetInsult(score int) string {
 	}
 
 	score = ((score / 10) - 10) * -1
+
+	if score == 10 {
+		score -= 1
+	}
+
 	return i.Insults[score][rand.IntN(3)]
 }
 
@@ -237,6 +242,9 @@ func Judgement(cmd *cobra.Command, args []string) {
 	insults := Insults{}
 	insults.Populate()
 
+	// Why did i make this a loop?
+	// The output is unreadable if there are multiple files
+	// In CI there will be only one file anyway.....
 	for _, file := range args {
 		var fn string = file
 
@@ -264,8 +272,10 @@ func Judgement(cmd *cobra.Command, args []string) {
 
 			if shame_messages.Score <= 0 {
 				shame_messages.Score = 0
+				fmt.Println(shame_messages.Score)
 				break
 			}
+
 		}
 		fmt.Println("=====================================")
 		fmt.Println(insults.GetInsult(shame_messages.Score))
