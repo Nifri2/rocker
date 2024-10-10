@@ -4,4 +4,4 @@ tasks:
   default:
     cmds:
       - echo "Building for {{OS}}..."
-      - go build -o ./build/cleaner .
+      - go build -o ./build/rocker .

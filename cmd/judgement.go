@@ -3,6 +3,7 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
+	"math/rand/v2"
 	"os"
 
 	log "github.com/sirupsen/logrus"
@@ -127,13 +128,86 @@ func (t *TableOfJudgement) Populate() {
 
 }
 
+type Insults struct {
+	Insults [][]string
+}
+
+func (i *Insults) Populate() {
+	i.Insults = [][]string{
+		{
+			"This is pure poetry in code form.",
+			"Your code shines like a diamond among pebbles.",
+			"You’ve cracked the code to coding perfection!",
+		},
+		{
+			"Almost flawless! A few tweaks and you’re golden.",
+			"Impressive work! Just a couple of rough edges.",
+			"Your attention to detail is commendable.",
+		},
+		{
+			"Solid work, but I see room for improvement.",
+			"Good effort, though there’s a bit of untapped potential.",
+			"Keep it up! A little refinement and this will be stellar.",
+		},
+		{
+			"This is borderline, like spaghetti that’s almost al dente but not quite.",
+			"Looks like you got the job done… but just barely.",
+			"It works, but have you considered coffee before coding?",
+		},
+		{
+			"Your code’s performance mirrors that of a sloth on vacation.",
+			"Functional? Yes. Impressive? Not even close.",
+			"Did you write this with your monitor off?",
+		},
+		{
+			"This is like eating plain toast when you were promised a gourmet meal.",
+			"If effort counts, then you pass… barely.",
+			"I’ve seen more structure in a house of cards.",
+		},
+		{
+			"I’ve seen fewer bugs in a rainforest.",
+			"Your code has the elegance of a car crash.",
+			"Is this performance art or just bad coding?",
+		},
+		{
+			"I hope you’re not getting paid by the quality of your work.",
+			"This code’s best feature is its ability to crash consistently.",
+			"I’ve seen better code written on cocktail napkins.",
+		},
+		{
+			"This is what happens when you copy-paste without reading.",
+			"You should read this: https://en.m.wikipedia.org/wiki/Reading",
+			"It’s hard to believe this came from a human mind.",
+		},
+		{
+			"My condolences to whoever has to maintain this.",
+			"Did you accidentally delete the good code and submit this instead?",
+			"The only good thing about this code is that it eventually stops running.",
+		},
+	}
+}
+
+func (i *Insults) GetInsult(score int) string {
+
+	if score > 100 {
+		score = 100
+	}
+
+	if score < 0 {
+		score = 0
+	}
+
+	score = ((score / 10) - 10) * -1
+	return i.Insults[score][rand.IntN(3)]
+}
+
 type Shame struct {
-	Weight  uint16
+	Weight  int
 	Message string
 }
 
 type ShameMessage struct {
-	Score  uint16
+	Score  int
 	Shames []Shame
 }
 
@@ -160,6 +234,9 @@ func Judgement(cmd *cobra.Command, args []string) {
 	table := TableOfJudgement{}
 	table.Populate()
 
+	insults := Insults{}
+	insults.Populate()
+
 	for _, file := range args {
 		var fn string = file
 
@@ -179,18 +256,21 @@ func Judgement(cmd *cobra.Command, args []string) {
 		}
 
 		for _, msg := range data {
-			shame_messages.Score -= uint16(table.Entry[msg.Code])
-			fmt.Println(msg.Code, table.Entry[msg.Code], shame_messages.Score)
+			shame_messages.Score -= int(table.Entry[msg.Code])
+			fmt.Println(msg.Code, table.Entry[msg.Code], shame_messages.Score, msg.Message)
 
 			// append shame message in ShameMessage.Shames
-			shame_messages.Shames = append(shame_messages.Shames, Shame{Weight: uint16(table.Entry[msg.Code]), Message: msg.Message})
+			shame_messages.Shames = append(shame_messages.Shames, Shame{Weight: int(table.Entry[msg.Code]), Message: msg.Message})
 
 			if shame_messages.Score <= 0 {
 				shame_messages.Score = 0
 				break
 			}
 		}
-		fmt.Print(shame_messages)
+		fmt.Println("=====================================")
+		fmt.Println(insults.GetInsult(shame_messages.Score))
+		fmt.Println("Score: ", shame_messages.Score)
+		// fmt.Print(shame_messages)
 
 	}
 }
