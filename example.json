@@ -1,0 +1,26 @@
+[
+  {
+    "code": "DL3007",
+    "column": 1,
+    "file": "Dockerfile",
+    "level": "warning",
+    "line": 1,
+    "message": "Using latest is prone to errors if the image will ever update. Pin the version explicitly to a release tag"
+  },
+  {
+    "code": "DL3013",
+    "column": 1,
+    "file": "Dockerfile",
+    "level": "warning",
+    "line": 3,
+    "message": "Pin versions in pip. Instead of `pip install <package>` use `pip install <package>==<version>` or `pip install --requirement <requirements file>`"
+  },
+  {
+    "code": "DL3020",
+    "column": 1,
+    "file": "Dockerfile",
+    "level": "error",
+    "line": 7,
+    "message": "Use COPY instead of ADD for files and folders"
+  }
+]
